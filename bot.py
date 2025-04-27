@@ -4,6 +4,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 
+from hendlers.kb_command import kb_com
 from hendlers.command import command
 
 load_dotenv()
@@ -11,6 +12,7 @@ load_dotenv()
 bot = Bot(os.getenv('BOT'))
 dp = Dispatcher()
 dp.include_router(command)
+dp.include_router(kb_com)
 
 
 async def main():

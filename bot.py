@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from hendlers.kb_command import kb_com
 from hendlers.command import command
+from database.models import async_main
 
 load_dotenv()
 
@@ -16,6 +17,7 @@ dp.include_router(kb_com)
 
 
 async def main():
+    await async_main()
     await dp.start_polling(bot)
 
 if __name__ == '__main__':

@@ -11,7 +11,6 @@ from config import (
     count_users_in_admin,
     home
 )
-# Вытащить админа или админов, это надо реализовать в конфиге и передавать список id. 
 
 def user_kb(user_telegram_id: int):
     kb = [

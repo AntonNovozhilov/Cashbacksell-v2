@@ -1,5 +1,5 @@
 from database.models import async_session
-from database.models import User, EventLog
+from database.models import User, EventLog, ChatPrivatUser
 from sqlalchemy import select
 from datetime import datetime, timedelta, timezone
 
@@ -36,3 +36,21 @@ async def count_users_week():
     async with async_session() as session:
         return await session.scalars(select(User).where(
             User.created_at >= week_ago.astimezone(timezone.utc)))
+    
+async def caht_add(tg_id, thread_id):
+    async with async_session() as session:
+        chat_user = await session.scalar(select(ChatPrivatUser).where(ChatPrivatUser.user_id==tg_id))
+        if not chat_user:
+            session.add(ChatPrivatUser(
+                user_id=tg_id,
+                thread_id=thread_id)
+            )
+            await session.commit()
+
+async def chat_privat(tg_id):
+    async with async_session() as session:
+        result = await session.scalars(
+            select(ChatPrivatUser.user_id).where(ChatPrivatUser.user_id == tg_id)
+        )
+        return result.all()
+    

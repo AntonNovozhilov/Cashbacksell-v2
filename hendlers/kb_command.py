@@ -25,7 +25,6 @@ from texts.command_text import FAQ, TEXT_CHANNALS, TEXT_REQ
 kb_com = Router()
 
 
-
 @kb_com.message(F.text==kb_create_post_text)
 async def inline_create_posts(message: types.Message):
     '''Вызов 2 инлайн книпки при нажатии на меню Составить пост.'''
@@ -106,6 +105,7 @@ async def price_barter(callback: types.CallbackQuery):
         message_id=PRICE_MESSAGE_ID_BARTER
     )
 
+
 # @kb_com.message(F.text==kb_price_text)
 # async def price(message: types.Message):
 #     await message.bot.forward_message(
@@ -126,3 +126,16 @@ async def price_barter(callback: types.CallbackQuery):
 #         chat_id = message.forward_from_chat.id
 #         post_id = message.forward_from_message_id
 #         await message.answer(f"Канал ID: {chat_id}\nПост ID: {post_id}")
+
+# @kb_com.message()
+# async def catch_forwarded_from_group(message: types.Message):
+#     if message.forward_from_chat and message.forward_from_chat.type in ['group', 'supergroup']:
+#         chat_id = message.forward_from_chat.id
+#         message_id = message.forward_from_message_id
+#         chat_title = message.forward_from_chat.title
+
+#         await message.answer(
+#             f"Группа: {chat_title or 'Без названия'}\n"
+#             f"ID группы: {chat_id}\n"
+#             f"ID сообщения: {message_id}"
+#         )

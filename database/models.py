@@ -32,7 +32,15 @@ class EventLog(Base):
 
     user = relationship("User", backref="events")
 
+class ChatPrivatUser(Base):
+    __tablename__ = 'chatusers'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.tg_id'), nullable=False)
+    thread_id: Mapped[int] = mapped_column(nullable=False)
 
 async def async_main():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    

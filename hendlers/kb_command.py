@@ -2,7 +2,7 @@ from aiogram import types, Router, F
 
 from keyboards.inline_kb import inline_create_post, inline_price
 from keyboards.kb_user import kb_admin, user_kb
-from database.requests import count_users
+from database.requests import count_users, count_users_today, count_users_week
 from config import (
     CHANNEL_ID_CASH,
     PRICE_MESSAGE_ID_CASH,
@@ -79,8 +79,12 @@ async def panel_admin(message: types.Message):
 @kb_com.message(F.text == count_users_in_admin)
 async def count_us(message: types.Message):
     users = await count_users()
+    today_users = await count_users_today()
+    week_users = await count_users_week()
     count = len(list(users))
-    await message.answer(f'Количество подписчиков в боте {count}')
+    count_today_users = len(list(today_users))
+    count_week_users = len(list(week_users))
+    await message.answer(f'Количество подписчиков в боте {count}\nСегодня подписалось {count_today_users}\nЗа неделю подписалось {count_week_users}')
 
 @kb_com.callback_query(F.data=='price_cash')
 async def price_cashback(callback: types.CallbackQuery):

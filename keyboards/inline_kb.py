@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
+from  database.requests import count_users
 
 def inline_create_post():
     inline_kb = [
@@ -15,3 +15,4 @@ def inline_price():
         [InlineKeyboardButton(text='Для канала с блогерами', callback_data='price_barter')]
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb)
+

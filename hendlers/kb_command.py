@@ -1,7 +1,7 @@
 from aiogram import types, Router, F
 
 from keyboards.inline_kb import inline_create_post, inline_price
-
+from keyboards.kb_user import kb_admin
 from config import (
     CHANNEL_ID_CASH,
     PRICE_MESSAGE_ID_CASH,
@@ -59,6 +59,12 @@ async def link_admin(message: types.Message):
     '''Вызов поста с сылкой на админа.'''
 
     await message.answer(text='[Администратор Юлия](https://t.me/@Juli_Novozhilova)', parse_mode='MarkdownV2')
+
+@kb_com.message(F.text == kb_admin_pannel_text)
+async def panel_admin(message: types.Message):
+    '''Вызов меню админа.'''
+
+    await message.answer('Вы вошли в админку', reply_markup=kb_admin(message.from_user.id))
 
 @kb_com.callback_query(F.data=='price_cash')
 async def price_cashback(callback: types.CallbackQuery):

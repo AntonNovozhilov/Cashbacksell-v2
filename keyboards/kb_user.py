@@ -21,3 +21,11 @@ def user_kb(user_telegram_id: int):
         kb.append([KeyboardButton(text=kb_admin_pannel_text)])
     keyboard = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder='Воспользуйтесь меню или напишите админу сюда в чат')
     return keyboard
+
+def kb_admin(user_telegram_id: int):
+    kb = [
+        [KeyboardButton(text='Кол-во пользователей')],
+        [KeyboardButton(text='Выйти из меню админа')]
+
+    ]
+    return ReplyKeyboardMarkup(keyboard=kb)

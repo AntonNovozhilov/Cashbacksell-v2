@@ -7,7 +7,9 @@ from config import (
     kb_faq_text,
     kb_requis_text,
     kb_admin_text,
-    kb_admin_pannel_text
+    kb_admin_pannel_text,
+    count_users_in_admin,
+    home
 )
 # Вытащить админа или админов, это надо реализовать в конфиге и передавать список id. 
 
@@ -24,8 +26,8 @@ def user_kb(user_telegram_id: int):
 
 def kb_admin(user_telegram_id: int):
     kb = [
-        [KeyboardButton(text='Кол-во пользователей')],
-        [KeyboardButton(text='Выйти из меню админа')]
+        [KeyboardButton(text=count_users_in_admin)],
+        [KeyboardButton(text=home)]
 
     ]
     return ReplyKeyboardMarkup(keyboard=kb)

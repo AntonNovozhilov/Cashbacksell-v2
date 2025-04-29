@@ -1,9 +1,10 @@
-from aiogram import types, Router
+from aiogram import types, Router, F
 from aiogram.filters import Command, CommandStart
 
 from texts.command_text import FAQ, START
 from keyboards.kb_user import user_kb
 from database.requests import add_user
+from config import home
 
 command = Router()
 

@@ -1,7 +1,8 @@
 from aiogram import types, Router, F
 
 from keyboards.inline_kb import inline_create_post, inline_price
-from keyboards.kb_user import kb_admin
+from keyboards.kb_user import kb_admin, user_kb
+from database.requests import count_users
 from config import (
     CHANNEL_ID_CASH,
     PRICE_MESSAGE_ID_CASH,
@@ -14,7 +15,9 @@ from config import (
     kb_faq_text,
     kb_requis_text,
     kb_admin_text,
-    kb_admin_pannel_text
+    kb_admin_pannel_text,
+    count_users_in_admin,
+    home
 )
 from texts.command_text import FAQ, TEXT_CHANNALS, TEXT_REQ
 
@@ -65,6 +68,19 @@ async def panel_admin(message: types.Message):
     '''Вызов меню админа.'''
 
     await message.answer('Вы вошли в админку', reply_markup=kb_admin(message.from_user.id))
+
+@kb_com.message(F.text == home)
+async def panel_admin(message: types.Message):
+    '''Выйти из меню админа.'''
+
+    await message.answer('Вы вышли из меню админа', reply_markup=user_kb(message.from_user.id))
+
+
+@kb_com.message(F.text == count_users_in_admin)
+async def count_us(message: types.Message):
+    users = await count_users()
+    count = len(list(users))
+    await message.answer(f'Количество подписчиков в боте {count}')
 
 @kb_com.callback_query(F.data=='price_cash')
 async def price_cashback(callback: types.CallbackQuery):

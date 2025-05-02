@@ -7,15 +7,18 @@ from dotenv import load_dotenv
 from hendlers.kb_command import kb_com
 from hendlers.command import command
 from hendlers.private_caht import private
+from fsm.post_cash import cachbackpost
 from database.models import async_main
 
 load_dotenv()
 
 bot = Bot(os.getenv('BOT'))
 dp = Dispatcher()
+dp.include_router(cachbackpost)
 dp.include_router(command)
 dp.include_router(kb_com)
 dp.include_router(private)
+
 
 
 async def main():

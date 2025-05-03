@@ -1,6 +1,6 @@
 from aiogram import F, types, Router
-from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.filters import Command
 from sqlalchemy import select
 from database.models import async_session, ChatPrivatUser
 from database.requests import caht_add, chat_privat, add_user
@@ -53,16 +53,3 @@ async def from_admin_to_user(message: types.Message):
                 )
             except Exception as e:
                 await message.reply(f"Не удалось переслать сообщение: {e}")
-
-# @private.message(F.chat.id == CHAT_ID, F.is_topic_message, Command("п"))
-# async def handle_price_command(message: types.Message):
-#     thread_id = message.message_thread_id
-#     if thread_id:
-#         try:
-#             await message.bot.forward_message(
-#                 chat_id=thread_id,
-#                 from_chat_id=CHANNEL_ID_CASH,
-#                 message_id=PRICE_MESSAGE_ID_CASH
-#             )
-#         except Exception as e:
-#             print(f"Ошибка при отправке прайса пользователю")

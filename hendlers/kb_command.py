@@ -1,8 +1,9 @@
 from aiogram import types, Router, F
+from aiogram.filters import Command
 
 from keyboards.inline_kb import inline_create_post, inline_price
 from keyboards.kb_user import kb_admin, user_kb
-from database.requests import count_users, count_users_today, count_users_week
+from database.requests import count_users, count_users_today, count_users_week, async_session, ChatPrivatUser, select
 from config import (
     CHANNEL_ID_CASH,
     PRICE_MESSAGE_ID_CASH,
@@ -18,7 +19,8 @@ from config import (
     kb_admin_pannel_text,
     count_users_in_admin,
     home,
-    CHANNEL_INFO_MESSAGE
+    CHANNEL_INFO_MESSAGE,
+    CHAT_ID
 )
 from texts.command_text import FAQ, TEXT_CHANNALS, TEXT_REQ
 
@@ -110,7 +112,39 @@ async def price_barter(callback: types.CallbackQuery):
         message_id=PRICE_MESSAGE_ID_BARTER
     )
 
+@kb_com.message(F.chat.id == CHAT_ID, F.message_thread_id, Command('pc'))
+async def from_admin_to_user(message: types.Message):
+    thread_id = message.message_thread_id
+    async with async_session() as session:
+        chat_user = await session.scalar(
+            select(ChatPrivatUser).where(ChatPrivatUser.thread_id == thread_id)
+        )
+        if chat_user:
+            try:
+                await message.bot.forward_message(
+                    chat_id=chat_user.user_id,
+                    from_chat_id=CHANNEL_ID_CASH,
+                    message_id=PRICE_MESSAGE_ID_CASH
+                )
+            except Exception as e:
+                await message.reply(f"Не удалось переслать сообщение: {e}")
 
+@kb_com.message(F.chat.id == CHAT_ID, F.message_thread_id, Command('pb'))
+async def from_admin_to_user(message: types.Message):
+    thread_id = message.message_thread_id
+    async with async_session() as session:
+        chat_user = await session.scalar(
+            select(ChatPrivatUser).where(ChatPrivatUser.thread_id == thread_id)
+        )
+        if chat_user:
+            try:
+                await message.bot.forward_message(
+                    chat_id=chat_user.user_id,
+                    from_chat_id=CHANNEL_ID_BARTER,
+                    message_id=PRICE_MESSAGE_ID_BARTER
+                )
+            except Exception as e:
+                await message.reply(f"Не удалось переслать сообщение: {e}")
 # @kb_com.message(F.text==kb_price_text)
 # async def price(message: types.Message):
 #     await message.bot.forward_message(
@@ -125,12 +159,12 @@ async def price_barter(callback: types.CallbackQuery):
 #     )
 
 # Обработчки чтобы получить id канала и сообщения
-@kb_com.message()
-async def catch_forwarded(message: types.Message):
-    if message.forward_from_chat:
-        chat_id = message.forward_from_chat.id
-        post_id = message.forward_from_message_id
-        await message.answer(f"Канал ID: {chat_id}\nПост ID: {post_id}")
+# @kb_com.message()
+# async def catch_forwarded(message: types.Message):
+#     if message.forward_from_chat:
+#         chat_id = message.forward_from_chat.id
+#         post_id = message.forward_from_message_id
+#         await message.answer(f"Канал ID: {chat_id}\nПост ID: {post_id}")
 
 # @kb_com.message()
 # async def catch_forwarded_from_group(message: types.Message):

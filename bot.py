@@ -21,6 +21,7 @@ dp.include_router(private)
 
 
 
+
 async def main():
     await async_main()
     await dp.start_polling(bot)

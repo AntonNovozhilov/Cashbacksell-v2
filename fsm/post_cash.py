@@ -86,7 +86,7 @@ async def post_price_after(message: types.Message, state: FSMContext):
         return
     await state.update_data(price_after=message.text)
     await state.set_state(PostCachback.discount)
-    await message.answer('Какая скидка в процентах?')
+    await message.answer('Введите скидку в рублях или в процентах')
 
 @cachbackpost.message(PostCachback.discount)
 async def post_cashback(message: types.Message, state: FSMContext):

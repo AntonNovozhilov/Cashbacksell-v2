@@ -3,7 +3,7 @@ from aiogram.filters import Command
 
 from keyboards.inline_kb import inline_create_post, inline_price
 from keyboards.kb_user import kb_admin, user_kb
-from database.requests import count_users, count_users_today, count_users_week, async_session, ChatPrivatUser, select
+from database.requests import count_users, count_users_today, count_users_week, async_session, ChatPrivatUser, select, price_barter_add, count_price_barter, count_price_barter_today, count_price_barter_week, count_price_barter_month
 from config import (
     CHANNEL_ID_CASH,
     PRICE_MESSAGE_ID_CASH,
@@ -20,7 +20,8 @@ from config import (
     count_users_in_admin,
     home,
     CHANNEL_INFO_MESSAGE,
-    CHAT_ID
+    CHAT_ID,
+    count_price_in_admin
 )
 from texts.command_text import FAQ, TEXT_CHANNALS, TEXT_REQ
 
@@ -92,6 +93,23 @@ async def count_us(message: types.Message):
     count_week_users = len(list(week_users))
     await message.answer(f'Количество подписчиков в боте {count}\nСегодня подписалось {count_today_users}\nЗа неделю подписалось {count_week_users}')
 
+@kb_com.message(F.text == count_price_in_admin)
+async def count_us_price(message: types.Message):
+    count_pricebarter = await count_price_barter()
+    today_pricebarter  = await count_price_barter_today()
+    week_pricebarter  = await count_price_barter_week()
+    month_pricebarter  = await count_price_barter_month()
+    count_price_bart = len(list(count_pricebarter))
+    count_today_pricebarter  = len(list(today_pricebarter))
+    count_week_pricebarter  = len(list(week_pricebarter))
+    count_month_pricebarter  = len(list(month_pricebarter))
+    await message.answer(f'''
+                         Количество запросов прайса по бартеру в боте всего {count_price_bart}
+Количество запросов прайса по бартеру в боте за месяц {count_month_pricebarter}                    
+Количество запросов прайса по бартеру в боте за неделю {count_week_pricebarter}
+Количество запросов прайса по бартеру в боте сегодня {count_today_pricebarter}
+''')
+
 @kb_com.callback_query(F.data=='price_cash')
 async def price_cashback(callback: types.CallbackQuery):
     '''При нажатии на кнопку 1 пересылает сообщение из канала с прайсом кешбека.'''
@@ -105,7 +123,7 @@ async def price_cashback(callback: types.CallbackQuery):
 @kb_com.callback_query(F.data=='price_barter')
 async def price_barter(callback: types.CallbackQuery):
     '''При нажатии на кнопку 2 пересылает сообщение из канала с прайсом бартера.'''
-
+    await price_barter_add(callback.from_user.id)
     await callback.message.bot.forward_message(
         chat_id=callback.message.chat.id,
         from_chat_id=CHANNEL_ID_BARTER,
@@ -113,7 +131,7 @@ async def price_barter(callback: types.CallbackQuery):
     )
 
 @kb_com.message(F.chat.id == CHAT_ID, F.message_thread_id, Command('pc'))
-async def from_admin_to_user(message: types.Message):
+async def from_admin_to_user_cashbak(message: types.Message):
     thread_id = message.message_thread_id
     async with async_session() as session:
         chat_user = await session.scalar(
@@ -130,7 +148,7 @@ async def from_admin_to_user(message: types.Message):
                 await message.reply(f"Не удалось переслать сообщение: {e}")
 
 @kb_com.message(F.chat.id == CHAT_ID, F.message_thread_id, Command('pb'))
-async def from_admin_to_user(message: types.Message):
+async def from_admin_to_user_barter(message: types.Message):
     thread_id = message.message_thread_id
     async with async_session() as session:
         chat_user = await session.scalar(

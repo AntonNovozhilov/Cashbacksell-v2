@@ -16,3 +16,7 @@ def inline_price():
     ]
     return InlineKeyboardMarkup(inline_keyboard=inline_kb)
 
+def finish_kb():
+    finish_kb = [[InlineKeyboardButton(text="✅ Завершить загрузку", callback_data="finish_post")]]
+    return InlineKeyboardMarkup(inline_keyboard=finish_kb)
+

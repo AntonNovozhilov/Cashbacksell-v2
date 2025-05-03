@@ -14,9 +14,10 @@ from config import (
 
 def user_kb(user_telegram_id: int):
     kb = [
-        [KeyboardButton(text=kb_create_post_text), KeyboardButton(text=kb_faq_text)],
-        [KeyboardButton(text=kb_price_text), KeyboardButton(text=kb_requis_text)],
-        [KeyboardButton(text=kb_cannals_text), KeyboardButton(text=kb_admin_text)],
+        [KeyboardButton(text=kb_cannals_text)],
+        [KeyboardButton(text=kb_price_text), KeyboardButton(text=kb_create_post_text)],
+        [KeyboardButton(text=kb_requis_text)],
+        [KeyboardButton(text=kb_faq_text), KeyboardButton(text=kb_admin_text)],
     ]
     if user_telegram_id in admin:
         kb.append([KeyboardButton(text=kb_admin_pannel_text)])

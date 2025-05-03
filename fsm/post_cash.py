@@ -1,4 +1,5 @@
 import asyncio
+import re
 from collections import defaultdict
 from aiogram import Router, F, types
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
@@ -16,6 +17,10 @@ from keyboards.kb_user import user_kb
 cachbackpost = Router()
 
 media_group_buffer = defaultdict(list)
+
+def contains_emoji(text: str):
+    emoji_pattern = re.compile("[\U00010000-\U0010ffff]", flags=re.UNICODE)
+    return bool(emoji_pattern.search(text))
 
 class PostCachback(StatesGroup):
     """Класс для составления поста в кешбеке."""
@@ -36,12 +41,18 @@ async def start_post(callback: types.CallbackQuery, state: FSMContext):
 
 @cachbackpost.message(PostCachback.title)
 async def post_market(message: types.Message, state: FSMContext):
+    if contains_emoji(message.text):
+        await message.answer('Пожалуйста, не используйте смайлики, только текст.')
+        return
     await state.update_data(title=message.text)
     await state.set_state(PostCachback.market)
     await message.answer('На какой площадке продается товар?')
 
 @cachbackpost.message(PostCachback.market)
 async def post_price(message: types.Message, state: FSMContext):
+    if contains_emoji(message.text):
+        await message.answer('Пожалуйста, не используйте смайлики, только текст.')
+        return
     await state.update_data(market=message.text)
     await state.set_state(PostCachback.price_before)
     await message.answer('Введите стоимость на маркетплейсе в рублях:')
@@ -51,6 +62,9 @@ async def post_price_before(message: types.Message, state: FSMContext):
     if not message.text.isdigit():
         await message.answer('Пожалуйста, введите цену числом без пробелов и символов (например, 1490):')
         return
+    if contains_emoji(message.text):
+        await message.answer('Пожалуйста, не используйте смайлики, только текст.')
+        return
     
     await state.update_data(price_before=message.text)
     await state.set_state(PostCachback.price_after)
@@ -58,16 +72,27 @@ async def post_price_before(message: types.Message, state: FSMContext):
 
 @cachbackpost.message(PostCachback.price_after)
 async def post_price_after(message: types.Message, state: FSMContext):
+    if contains_emoji(message.text):
+        await message.answer('Пожалуйста, не используйте смайлики, только текст.')
+        return
+    data = await state.get_data()
     if not message.text.isdigit():
         await message.answer('Пожалуйста, введите цену числом без пробелов и символов (например, 1000):')
         return
-    
+    new_price = int(message.text)
+    old_price = int(data.get('price_before', 0))
+    if new_price >= old_price:
+        await message.answer('Стоимость после кешбека не может быть больше или равна стоимости до кешбека.')
+        return
     await state.update_data(price_after=message.text)
     await state.set_state(PostCachback.discount)
     await message.answer('Какая скидка в процентах?')
 
 @cachbackpost.message(PostCachback.discount)
 async def post_cashback(message: types.Message, state: FSMContext):
+    if contains_emoji(message.text):
+        await message.answer('Пожалуйста, не используйте смайлики, только текст.')
+        return
     if not message.text.isdigit():
             await message.answer("Пожалуйста, введите кешбэк числом (например, 300 или 10):")
             return
@@ -79,6 +104,9 @@ async def post_cashback(message: types.Message, state: FSMContext):
 
 @cachbackpost.message(PostCachback.seller)
 async def post_seller(message: types.Message, state: FSMContext):
+    if contains_emoji(message.text):
+        await message.answer('Пожалуйста, не используйте смайлики, только текст.')
+        return
     await state.update_data(seller=message.text)
     await message.answer("Теперь прикрепите фото к посту:")
     await state.set_state(PostCachback.photo)
@@ -135,9 +163,9 @@ async def handle_finish(callback: types.CallbackQuery, state: FSMContext):
         f"<i><b>{data['title']}</b></i> \n"
         f"<i>{data['market']}</i> \n\n"
         f"<b>Цена на маркетплейсе:</b> {data['price_before']}₽ ❌ \n"
-        f"<b>Цена для вас:</b> {data['price_after']}₽ ✅ \n"
-        f"<b>Размер кешбека:</b> {data['discount']}{data['cashback_type']} 🔥 \n\n"
-        f"🖊️ <b>Для получения инструкции по выкупу пиши</b> <i>@{data['seller']}</i>"
+        f"<b>Цена для Вас:</b> {data['price_after']}₽ ✅ \n"
+        f"<i>(Кешбек - {data['discount']}{data['cashback_type']}🔥)</i> \n\n"
+        f"🖊️ <b>Для получения инструкции по выкупу пиши</b> <i>{data['seller']}</i>"
     )
     user_id = callback.from_user.id
     username = callback.from_user.username or ''

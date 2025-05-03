@@ -17,7 +17,8 @@ from config import (
     kb_admin_text,
     kb_admin_pannel_text,
     count_users_in_admin,
-    home
+    home,
+    CHANNEL_INFO_MESSAGE
 )
 from texts.command_text import FAQ, TEXT_CHANNALS, TEXT_REQ
 
@@ -48,7 +49,11 @@ async def faq(message: types.Message):
 async def list_channals(message: types.Message):
     '''Вызов поста с списком каналов.'''
 
-    await message.answer(text=TEXT_CHANNALS)
+    await message.bot.forward_message(
+        chat_id=message.chat.id,
+        from_chat_id=CHANNEL_ID_BARTER,
+        message_id=CHANNEL_INFO_MESSAGE
+    )
 
 @kb_com.message(F.text == kb_requis_text)
 async def reqwuis(message: types.Message):
@@ -120,12 +125,12 @@ async def price_barter(callback: types.CallbackQuery):
 #     )
 
 # Обработчки чтобы получить id канала и сообщения
-# @kb_com.message()
-# async def catch_forwarded(message: types.Message):
-#     if message.forward_from_chat:
-#         chat_id = message.forward_from_chat.id
-#         post_id = message.forward_from_message_id
-#         await message.answer(f"Канал ID: {chat_id}\nПост ID: {post_id}")
+@kb_com.message()
+async def catch_forwarded(message: types.Message):
+    if message.forward_from_chat:
+        chat_id = message.forward_from_chat.id
+        post_id = message.forward_from_message_id
+        await message.answer(f"Канал ID: {chat_id}\nПост ID: {post_id}")
 
 # @kb_com.message()
 # async def catch_forwarded_from_group(message: types.Message):

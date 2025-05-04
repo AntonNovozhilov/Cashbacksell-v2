@@ -20,3 +20,6 @@ def finish_kb():
     finish_kb = [[InlineKeyboardButton(text="✅ Завершить загрузку", callback_data="finish_post")]]
     return InlineKeyboardMarkup(inline_keyboard=finish_kb)
 
+def finish_kb2():
+    finish_kb = [[InlineKeyboardButton(text="✅ Завершить загрузку", callback_data="finish_post2")]]
+    return InlineKeyboardMarkup(inline_keyboard=finish_kb)

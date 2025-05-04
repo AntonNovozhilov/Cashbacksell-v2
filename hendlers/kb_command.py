@@ -47,7 +47,10 @@ async def price(message: types.Message):
 async def faq(message: types.Message):
     '''Вызов поста с FAQом.'''
 
-    await message.answer(text=FAQ)
+    photo_path = 'images/faq.jpg'
+    photo = types.FSInputFile(photo_path)
+    await message.answer_photo(photo=photo)
+    await message.answer(text=FAQ, parse_mode='MarkdownV2')
 
 @kb_com.message(F.text == kb_cannals_text)
 async def list_channals(message: types.Message):

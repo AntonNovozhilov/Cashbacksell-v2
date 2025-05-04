@@ -1,11 +1,10 @@
-from database.models import async_session
-from database.models import User, EventLog, ChatPrivatUser
+from database.models import async_session, User, EventLog, ChatPrivatUser
 from sqlalchemy import select, and_
 from datetime import datetime, timedelta, timezone
 
 UTC_PLUS_4 = timezone(timedelta(hours=4))
 now = datetime.now(UTC_PLUS_4)
-start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=1)
 end_of_day = now.replace(hour=23, minute=59, second=59, microsecond=999999)
 week_ago = now - timedelta(days=7)
 month_ago = now - timedelta(days=30)
@@ -60,7 +59,7 @@ async def price_barter_add(tg_id):
         event = EventLog(
             user_id=tg_id,
             event_type='price_barter',
-            created_at=datetime.now(UTC_PLUS_4)
+            created_at=now
         )
         session.add(event)
         await session.commit()
@@ -92,3 +91,41 @@ async def count_price_barter_month():
     async with async_session() as session:
         return await session.scalars(select(EventLog).where(
             and_(EventLog.created_at >= month_ago.astimezone(timezone.utc), EventLog.event_type == 'price_barter')))
+    
+async def price_cashback_add(tg_id):
+    async with async_session() as session:
+        event = EventLog(
+            user_id=tg_id,
+            event_type='price_cash',
+            created_at=now
+        )
+        session.add(event)
+        await session.commit()
+
+async def count_price_cashback():
+    async with async_session() as session:
+        return await session.scalars(select(EventLog).where(EventLog.event_type == 'price_cash'))
+
+
+async def count_price_cashback_today():
+    async with async_session() as session:
+        return await session.scalars(
+            select(EventLog).where(
+                and_(
+                    EventLog.event_type == 'price_cash',
+                    EventLog.created_at >= start_of_day.astimezone(timezone.utc),
+                    EventLog.created_at <= end_of_day.astimezone(timezone.utc)
+                )
+            )
+        )
+
+    
+async def count_price_cashback_week():
+    async with async_session() as session:
+        return await session.scalars(select(EventLog).where(
+            and_(EventLog.created_at >= week_ago.astimezone(timezone.utc), EventLog.event_type == 'price_cash')))
+    
+async def count_price_cashback_month():
+    async with async_session() as session:
+        return await session.scalars(select(EventLog).where(
+            and_(EventLog.created_at >= month_ago.astimezone(timezone.utc), EventLog.event_type == 'price_cash')))

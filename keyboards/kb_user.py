@@ -10,7 +10,8 @@ from config import (
     kb_admin_pannel_text,
     count_users_in_admin,
     count_price_in_admin,
-    home
+    home,
+    news
 )
 
 def user_kb(user_telegram_id: int):
@@ -29,6 +30,7 @@ def kb_admin(user_telegram_id: int):
     kb = [
         [KeyboardButton(text=count_users_in_admin)],
         [KeyboardButton(text=count_price_in_admin)],
+        [KeyboardButton(text=news)],
         [KeyboardButton(text=home)]
 
     ]

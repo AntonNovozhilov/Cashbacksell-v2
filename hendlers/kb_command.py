@@ -3,7 +3,7 @@ from aiogram.filters import Command
 
 from keyboards.inline_kb import inline_create_post, inline_price
 from keyboards.kb_user import kb_admin, user_kb
-from database.requests import count_users, count_users_today, count_users_week, async_session, ChatPrivatUser, select, price_barter_add, count_price_barter, count_price_barter_today, count_price_barter_week, count_price_barter_month
+from database.requests import count_price_cashback, count_price_cashback_month, count_price_cashback_today, count_price_cashback_week, count_users, count_users_today, count_users_week, async_session, ChatPrivatUser, price_cashback_add, select, price_barter_add, count_price_barter, count_price_barter_today, count_price_barter_week, count_price_barter_month
 from config import (
     CHANNEL_ID_CASH,
     PRICE_MESSAGE_ID_CASH,
@@ -21,7 +21,8 @@ from config import (
     home,
     CHANNEL_INFO_MESSAGE,
     CHAT_ID,
-    count_price_in_admin
+    count_price_in_admin,
+    news
 )
 from texts.command_text import FAQ, TEXT_CHANNALS, TEXT_REQ
 
@@ -103,17 +104,35 @@ async def count_us_price(message: types.Message):
     count_today_pricebarter  = len(list(today_pricebarter))
     count_week_pricebarter  = len(list(week_pricebarter))
     count_month_pricebarter  = len(list(month_pricebarter))
+    count_pricecashback = await count_price_cashback()
+    today_pricecashback  = await count_price_cashback_today()
+    week_pricecashback  = await count_price_cashback_week()
+    month_pricecashback  = await count_price_cashback_month()
+    count_pricec = len(list(count_pricecashback))
+    count_today_pricec = len(list(today_pricecashback))
+    count_week_pricec = len(list(week_pricecashback))
+    count_month_pricec = len(list(month_pricecashback))
     await message.answer(f'''
-                         Количество запросов прайса по бартеру в боте всего {count_price_bart}
-Количество запросов прайса по бартеру в боте за месяц {count_month_pricebarter}                    
-Количество запросов прайса по бартеру в боте за неделю {count_week_pricebarter}
-Количество запросов прайса по бартеру в боте сегодня {count_today_pricebarter}
-''')
+<b>Статистика запросов прайса</b>
+
+🔁 <b>Бартер:</b>
+— Всего: <b>{count_price_bart}</b>
+— За месяц: <b>{count_month_pricebarter}</b>
+— За неделю: <b>{count_week_pricebarter}</b>
+— Сегодня: <b>{count_today_pricebarter}</b>
+
+💰 <b>Кэшбек:</b>
+— Всего: <b>{count_pricec}</b>
+— За месяц: <b>{count_month_pricec}</b>
+— За неделю: <b>{count_week_pricec}</b>
+— Сегодня: <b>{count_today_pricec}</b>
+''', parse_mode="HTML")
 
 @kb_com.callback_query(F.data=='price_cash')
 async def price_cashback(callback: types.CallbackQuery):
     '''При нажатии на кнопку 1 пересылает сообщение из канала с прайсом кешбека.'''
 
+    await price_cashback_add(callback.from_user.id)  
     await callback.message.bot.forward_message(
         chat_id=callback.message.chat.id,
         from_chat_id=CHANNEL_ID_CASH,
@@ -123,6 +142,7 @@ async def price_cashback(callback: types.CallbackQuery):
 @kb_com.callback_query(F.data=='price_barter')
 async def price_barter(callback: types.CallbackQuery):
     '''При нажатии на кнопку 2 пересылает сообщение из канала с прайсом бартера.'''
+
     await price_barter_add(callback.from_user.id)
     await callback.message.bot.forward_message(
         chat_id=callback.message.chat.id,
@@ -163,6 +183,8 @@ async def from_admin_to_user_barter(message: types.Message):
                 )
             except Exception as e:
                 await message.reply(f"Не удалось переслать сообщение: {e}")
+
+
 # @kb_com.message(F.text==kb_price_text)
 # async def price(message: types.Message):
 #     await message.bot.forward_message(

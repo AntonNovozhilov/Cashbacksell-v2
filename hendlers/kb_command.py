@@ -49,8 +49,9 @@ async def faq(message: types.Message):
 
     photo_path = 'images/faq.jpg'
     photo = types.FSInputFile(photo_path)
-    await message.answer_photo(photo=photo)
-    await message.answer(text=FAQ, parse_mode='MarkdownV2')
+    # await message.answer_photo(photo=photo)
+    # await message.answer(text=FAQ, parse_mode='MarkdownV2')
+    await message.bot.send_photo(chat_id=message.chat.id, photo=photo, caption=FAQ, parse_mode='MarkdownV2')
 
 @kb_com.message(F.text == kb_cannals_text)
 async def list_channals(message: types.Message):

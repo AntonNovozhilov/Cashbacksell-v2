@@ -1,19 +1,15 @@
-from aiogram import F, types, Router
-from aiogram.fsm.context import FSMContext
-from aiogram.filters import Command
+from aiogram import F, Router, types
 from sqlalchemy import select
-from database.models import async_session, ChatPrivatUser
-from database.requests import caht_add, chat_privat, add_user
-from config import CHAT_ID, CHANNEL_ID_CASH, PRICE_MESSAGE_ID_CASH
 
+from config import CHAT_ID
+from database.models import ChatPrivatUser, async_session
+from database.requests import add_user, caht_add, chat_privat
 
 private = Router()
 
 @private.message(F.chat.type == 'private')
-async def private_chat_message(message: types.Message): # , state: FSMContext):
-    # current_state = await state.get_state()
-    # if not current_state:
-    #     return
+async def private_chat_message(message: types.Message):
+    '''Обработка всех сообщений и инициализация теммы в группе.'''
     user_id = message.from_user.id
     username = message.from_user.username or ''
     first_name = message.from_user.first_name or ''
@@ -39,6 +35,7 @@ async def private_chat_message(message: types.Message): # , state: FSMContext):
 
 @private.message(F.chat.id == CHAT_ID, F.message_thread_id)
 async def from_admin_to_user(message: types.Message):
+    '''Ответ клиенту через бота и тему.'''
     thread_id = message.message_thread_id
     async with async_session() as session:
         chat_user = await session.scalar(
@@ -52,4 +49,4 @@ async def from_admin_to_user(message: types.Message):
                     message_id=message.message_id
                 )
             except Exception as e:
-                await message.reply(f"Не удалось переслать сообщение: {e}")
+                await message.reply(f'Не удалось переслать сообщение: {e}')

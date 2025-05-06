@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from  database.requests import count_users
 
 def inline_create_post():
+    '''Кнопки для создания поста.'''
     inline_kb = [
         [InlineKeyboardButton(text='Для канала с кешбеком', callback_data='create_cash')],
         [InlineKeyboardButton(text='Для канала с блогерами', callback_data='create_barter')]
@@ -10,6 +10,7 @@ def inline_create_post():
 
 
 def inline_price():
+    '''Кнопки для запроса прайса.'''
     inline_kb = [
         [InlineKeyboardButton(text='Для канала с кешбеком', callback_data='price_cash')],
         [InlineKeyboardButton(text='Для канала с блогерами', callback_data='price_barter')]
@@ -17,9 +18,11 @@ def inline_price():
     return InlineKeyboardMarkup(inline_keyboard=inline_kb)
 
 def finish_kb():
-    finish_kb = [[InlineKeyboardButton(text="✅ Завершить загрузку", callback_data="finish_post")]]
+    '''Кнопка завершить загрузку фото.'''
+    finish_kb = [[InlineKeyboardButton(text='✅ Завершить загрузку', callback_data='finish_post')]]
     return InlineKeyboardMarkup(inline_keyboard=finish_kb)
 
 def finish_kb2():
-    finish_kb = [[InlineKeyboardButton(text="✅ Завершить загрузку", callback_data="finish_post2")]]
+    '''Кнопка завершить загрузку фото два.'''
+    finish_kb = [[InlineKeyboardButton(text='✅ Завершить загрузку', callback_data='confirm_post2')]]
     return InlineKeyboardMarkup(inline_keyboard=finish_kb)

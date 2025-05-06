@@ -1,20 +1,13 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
-from config import (
-    admin,
-    kb_price_text,
-    kb_create_post_text,
-    kb_cannals_text,
-    kb_faq_text,
-    kb_requis_text,
-    kb_admin_text,
-    kb_admin_pannel_text,
-    count_users_in_admin,
-    count_price_in_admin,
-    home,
-    news
-)
+
+from config import (admin, count_price_in_admin, count_users_in_admin, home,
+                    kb_admin_pannel_text, kb_admin_text, kb_cannals_text,
+                    kb_create_post_text, kb_faq_text, kb_price_text,
+                    kb_requis_text, news)
+
 
 def user_kb(user_telegram_id: int):
+    '''Главное меню.'''
     kb = [
         [KeyboardButton(text=kb_cannals_text)],
         [KeyboardButton(text=kb_price_text), KeyboardButton(text=kb_create_post_text)],
@@ -27,6 +20,7 @@ def user_kb(user_telegram_id: int):
     return keyboard
 
 def kb_admin(user_telegram_id: int):
+    '''Меню в админке.'''
     kb = [
         [KeyboardButton(text=count_users_in_admin)],
         [KeyboardButton(text=count_price_in_admin)],

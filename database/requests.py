@@ -26,6 +26,11 @@ async def count_users():
     async with async_session() as session:
         return await session.scalars(select(User))
     
+async def count_users_tg_id_list():
+    async with async_session() as session:
+        result = await session.scalars(select(User.tg_id))
+        return result.all()
+    
 async def count_users_today():
     async with async_session() as session:
         return await session.scalars(select(User).where(

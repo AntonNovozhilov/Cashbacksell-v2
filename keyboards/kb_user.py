@@ -30,7 +30,7 @@ def kb_admin(user_telegram_id: int):
     kb = [
         [KeyboardButton(text=count_users_in_admin)],
         [KeyboardButton(text=count_price_in_admin)],
-        # [KeyboardButton(text=news)],
+        [KeyboardButton(text=news)],
         [KeyboardButton(text=home)]
 
     ]

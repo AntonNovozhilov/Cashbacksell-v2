@@ -170,12 +170,12 @@ async def confirm_post(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer('Сначала добавьте хотя бы одно фото.')
         return
     text = (
-        f'<i><b>{data['title']}</b></i> \n'
-        f'<i>{data['market']}</i> \n\n'
-        f'<b>Цена на маркетплейсе:</b> {data['price_before']}₽ ❌ \n'
-        f'<b>Цена для Вас:</b> {data['price_after']}₽ ✅ \n'
-        f'<i>(Кешбек - {data['discount']}{data['cashback_type']}🔥)</i> \n\n'
-        f'🖊️ <b>Для получения инструкции по выкупу пиши</b> <i>{data['seller']}</i>'
+        f'<i><b>{data["title"]}</b></i> \n'
+        f'<i>{data["market"]}</i> \n\n'
+        f'<b>Цена на маркетплейсе:</b> {data["price_before"]}₽ ❌ \n'
+        f'<b>Цена для Вас:</b> {data["price_after"]}₽ ✅ \n'
+        f'<i>(Кешбек - {data["discount"]}{data["cashback_type"]}🔥)</i> \n\n'
+        f'🖊️ <b>Для получения инструкции по выкупу пиши</b> <i>{data["seller"]}</i>'
     )
     preview_buttons = types.InlineKeyboardMarkup(inline_keyboard=[
         [types.InlineKeyboardButton(text='📤 Отправить на модерацию', callback_data='send_to_mod_cash')],
@@ -199,12 +199,12 @@ async def handle_finish2(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.answer('Сначала добавьте хотя бы одно фото.')
         return
     text = (
-        f'<i><b>{data['title']}</b></i> \n'
-        f'<i>{data['market']}</i> \n\n'
-        f'<b>Цена на маркетплейсе:</b> {data['price_before']}₽ ❌ \n'
-        f'<b>Цена для Вас:</b> {data['price_after']}₽ ✅ \n'
-        f'<i>(Кешбек - {data['discount']}{data['cashback_type']}🔥)</i> \n\n'
-        f'🖊️ <b>Для получения инструкции по выкупу пиши</b> <i>{data['seller']}</i>'
+        f'<i><b>{data["title"]}</b></i> \n'
+        f'<i>{data["market"]}</i> \n\n'
+        f'<b>Цена на маркетплейсе:</b> {data["price_before"]}₽ ❌ \n'
+        f'<b>Цена для Вас:</b> {data["price_after"]}₽ ✅ \n'
+        f'<i>(Кешбек - {data["discount"]}{data["cashback_type"]}🔥)</i> \n\n'
+        f'🖊️ <b>Для получения инструкции по выкупу пиши</b> <i>{data["seller"]}</i>'
     )
     user_id = callback.from_user.id
     username = callback.from_user.username or ''
